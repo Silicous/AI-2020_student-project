@@ -16,3 +16,8 @@
 * Numer stolika i nazwa posiłku
 
 
+## Wykorzystane biblioteki
+* Pygame
+* Concepts (dla grafów konceptualnych)
+
+
