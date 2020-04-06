@@ -60,7 +60,7 @@ class Order:
     conc_dishes = contexts.Context.fromstring(('''
             |soup |dessert|main course |
  tiramisu   |     |   X   |            |
- beff steak |     |       |            |
+ beef steak |     |       |    X       |
  shiruko    |  X  |   X   |            |
  '''))
 
