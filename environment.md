@@ -12,4 +12,7 @@
 ### Kuchnia
 * Otrzymuje zamówienia i generuje dania
 
+### Zamówienia
+* Numer stolika i nazwa posiłku
+
 
