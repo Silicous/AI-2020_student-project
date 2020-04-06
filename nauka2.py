@@ -31,6 +31,50 @@ SCREEN_HEIGHT = 564
 #         self.rect = self.surf.get_rect()
 
 
+class Dishes:
+    #to do
+    x=0
+    y=0
+
+    def __int__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def draw(self, surface, image):
+        surface.blit(image, (self.x, self.y))
+
+
+class Clients:
+    #to do
+    x = 0
+    y = 0
+
+    def __int__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def draw(self, surface, image):
+        surface.blit(image, (self.x, self.y))
+
+
+class Kitchen:
+    #to do or delete
+    pass
+
+
+class Order:
+    #to do
+    
+    x = 0
+    y = 0
+    
+
+    def __int__(self, x, y, id):
+        self.x = x
+        self.y = y
+        self.id = id
+    
+
 
 class Player(pygame.sprite.Sprite):
     '''
