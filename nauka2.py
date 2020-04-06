@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 import time
+from concepts import contexts
 background_image = pygame.image.load("./images/tile.jpg")
 
 from pygame.locals import (
@@ -50,11 +51,18 @@ class Kitchen:
 
 
 class Order:
-    #to do
+    # to do
 
     x = 0
     y = 0
 
+    # conceptual graphs to represent menu
+    conc_dishes = contexts.Context.fromstring(('''
+            |soup |dessert|main course |
+ tiramisu   |     |   X   |            |
+ beff steak |     |       |            |
+ shiruko    |  X  |   X   |            |
+ '''))
 
     def __int__(self, x, y, id):
         self.x = x
