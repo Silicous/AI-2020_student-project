@@ -67,11 +67,11 @@ class Order:
     def __int__(self, x, y, id):
         self.x = x
         self.y = y
-        self.id = id
+        self.id = id	#all orders will have their own number
 
 
 def draw():
-    screen.blit(background_image, [0, 0])
+    screen.blit(background_image, [0, 0])	#background render
     screen.blit(player.surf, player.rect)
     player_list.draw(screen)
     pygame.display.flip()
@@ -124,7 +124,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.imgList[index]
         if newKey == "down":
             self.rect.move_ip(0,7)
-        elif newKey == 'up':
+        elif newKey == 'up':				
             self.rect.move_ip(0, -7)
         elif newKey == 'left':
             self.rect.move_ip(-7, 0)
@@ -162,7 +162,7 @@ class Player(pygame.sprite.Sprite):
             newKey = 'down'
             self.same(newKey, self.images1)
         elif pressed_keys[K_UP]:
-            newKey = 'up'
+            newKey = 'up'						#changing animation
             self.same(newKey, self.images4)
         elif pressed_keys[K_LEFT]:
             newKey = 'left'
@@ -173,8 +173,8 @@ class Player(pygame.sprite.Sprite):
 
 
 pygame.init()
-clock = pygame.time.Clock()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()	
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))	#to render a window
 player = Player()
 player.rect.x = 22
 player.rect.y = 22
