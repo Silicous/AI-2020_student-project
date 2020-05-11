@@ -20,8 +20,8 @@ Posiłki, ich nazwa oraz rodzaj.
 
 
 Za pomocy graphviz możemy narysować grafy z poniższego kodu:  
-#####
 
+#####
     digraph Lattice {
 	node [label="" shape=circle style=filled width=.25]
 	edge [dir=none labeldistance=1.5 minlen=2]
@@ -49,17 +49,21 @@ Za pomocy graphviz możemy narysować grafy z poniższego kodu:
     }
 
 Dane testowe: 
+
 ##
     func_input = ['meal']
+
 Dane wyjściowe: 
+
 ##
     ['Pork', 'Greek Salad', 'Pizza']
+
 
 ### Implementacja
 
 Główna część:
-#####
 
+#####
     gen_num = 20    #generations
     gen_sol = 6     #solutions
     gen_par_mating = 2  #how many solutions we select
