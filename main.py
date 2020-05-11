@@ -3,6 +3,11 @@ from math import sqrt
 from math import floor
 import random
 from queue import PriorityQueue
+import pygad
+from concepts import *
+from graphviz import *
+import numpy as np
+
 pygame.init()
 
 #ai settings
@@ -24,6 +29,37 @@ display = pygame.display.set_mode((WIDTH*32+200, HEIGHT*32))
 #eating time
 EAT_TIME = 15
 
+#### Menu
+menu = Context.fromstring(''' |meat|salad|meal|drink|cold|hot |
+                   Pork       |  X |     |  X |     |    |  X |
+                   Espresso   |    |     |    |  X  |    |  X |
+                   Green Tea  |    |     |    |  X  | X  |    |
+                   Greek Salad|    |  X  |  X |     | X  |    |
+                   Pizza      |    |     |  X |     |    |  X |''')
+
+
+#genetic algos
+gen_num = 20   #generations
+gen_sol = 6     #solutions
+gen_par_mating = 2  #how many solutions we select
+
+mut_per_gen = 10
+mut_num_gen = None
+
+crossover = "two_points"
+muta_type = "scramble"
+par_keep = 1 #keep only one parent
+
+init_range_l = -2 #low
+init_range_h = -5 #high
+
+func_input = ['meal']
+func_output = []
+
+for e in menu.extension(['meal',]):
+    func_output.append(e)
+
+####
 class Tile:
     def __init__(self, x, y, canwalk, table, kitchen):
         self.x = x
