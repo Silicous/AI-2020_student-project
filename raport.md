@@ -61,13 +61,14 @@ Dane wyjściowe:
 Główna część:
 
 
-    gen_num = 20    #generations
+    gen_num = 20   #generations
     gen_sol = 6     #solutions
     gen_par_mating = 2  #how many solutions we select
     
     mut_per_gen = 10
     mut_num_gen = None
     
+    par_selc_type = "tournament"
     crossover = "two_points"
     muta_type = "scramble"
     par_keep = 1 #keep only one parent
@@ -76,6 +77,7 @@ Główna część:
     init_range_h = -5 #high
     ...
     
+
  
 ### Biblioteki
 
