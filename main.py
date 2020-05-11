@@ -63,7 +63,6 @@ def fittnes_f(sol):
     output = 0
     if sol in menu.extension([sol],):
         output = 0.5
-    #output = np.sum(sol * func_input)
     r_out = 1
     fitness = 1.0 / np.abs(output - r_out)
     return fitness
