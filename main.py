@@ -43,55 +43,6 @@ menu = Context.fromstring(''' |meat|salad|meal|drink|cold|hot |
 
 #print(menu.extension(['meal',]))
 
-###
-
-#genetic algos
-gen_num = 20   #generations
-gen_sol = 6     #solutions
-gen_par_mating = 2  #how many solutions we select
-
-mut_per_gen = 10
-mut_num_gen = None
-
-par_selc_type = "tournament"
-crossover = "two_points"
-muta_type = "scramble"
-par_keep = 1 #keep only one parent
-
-init_range_l = -2 #low
-init_range_h = -5 #high
-
-func_input = ['meal']
-right_output = []
-
-for e in menu.extension(['meal',]):
-    right_output.append(e)
-
-def fitness_f(sol):
-    output = 0
-    if sol in menu.extension([sol],):
-        output = 0.5
-    r_out = 1
-    fitness = 1.0 / np.abs(output - r_out)
-    return fitness
-
-ga_inst = pygad.GA(num_generations=gen_num,
-          sol_per_pop=gen_sol,
-          num_parents_mating=gen_par_mating,
-          num_genes=len(func_input),
-          fitness_func=fitness_f,
-          mutation_percent_genes=mut_per_gen,
-          mutation_num_genes=mut_num_gen,
-          init_range_low=init_range_l,
-          init_range_high=init_range_l,
-          parent_selection_type=par_selc_type,
-          crossover_type=crossover,
-          mutation_type=muta_type,
-          keep_parents=par_keep,
-          K_tournament=4)
-
-#ga_inst.run()
-#ga_inst.plot_result()
 
 #print(func_output)
 
