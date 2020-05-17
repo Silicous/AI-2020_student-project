@@ -11,11 +11,11 @@ import numpy as np
 pygame.init()
 
 # ai settings
-S_IDLE = ("kitchen", "middle", "inplace")
-S_FIRST = ("order", "food")
+#S_IDLE = ("kitchen", "middle", "inplace")
+#S_FIRST = ("order", "food")
 
-IDLE = random.choice(S_IDLE)
-FIRST = random.choice(S_FIRST)
+IDLE = "inplace"
+FIRST = "order"
 
 HEIGHT = 10
 WIDTH = 10
@@ -47,8 +47,18 @@ menu = Context.fromstring(''' |meat|salad|meal|drink|cold|hot |
 #print(func_output)
 
 ###
+class Node:
+    def __init__(self, state, parent, action):
+        self.state = state
+        self.parent = parent
+        self.action = action
+    def __eq__(self, other):
+        return True
+    def __lt__(self, other):
+        return True
+
 class Tile:
-    def __init__(self, x, y, canwalk, table, kitchen):
+    def __init__(self, x, y, canwalk, table, kitchen, cost):
         self.x = x
         self.y = y
         self.canwalk = canwalk
@@ -59,10 +69,11 @@ class Tile:
         self.visited = False
         self.path = False
         self.parent = (0, 0)
+        self.cost = cost
 
 
 class Restaurant:
-    def __init__(self, tables, clients):
+    def __init__(self, tables, clients, spots):
         self.h = HEIGHT
         self.w = WIDTH
         self.tiles = []
@@ -74,9 +85,9 @@ class Restaurant:
             new = []
             for iw in range(WIDTH):
                 if ih == 0 or ih == HEIGHT - 1 or iw == 0 or iw == WIDTH - 1:
-                    new.append(Tile(ih, iw, False, False, False))
+                    new.append(Tile(ih, iw, False, False, False, 1))
                 else:
-                    new.append(Tile(ih, iw, True, False, False))
+                    new.append(Tile(ih, iw, True, False, False, 1))
             self.tiles.append(new)
         # random walls
         for i in range(3):
@@ -97,7 +108,13 @@ class Restaurant:
                 self.tiles[h][w].table = True
                 i = i + 1
                 self.tables.append((w, h))
-
+        # random spots
+        i = 0
+        while i < spots:
+            w = random.randint(2, WIDTH - 3)
+            h = random.randint(2, HEIGHT - 3)
+            self.tiles[h][w].cost = 5
+            i = i + 1
         self.tiles[1][1].kitchen = True
 
     def putClient(self):
@@ -136,36 +153,135 @@ class Agent:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.dir = 1 #1234 NWSE
         self.path = []
         self.idle = True
         self.orders = []
         self.food = False
+        self.goal = (0,0)
 
     def walk(self):
-        t = self.path.pop(0)
-        self.x = t[0]
-        self.y = t[1]
+        if self.path:
+            t = self.path.pop(0)
+            if t[0] == "rotate":
+                if t[1] == "right":
+                    self.dir = self.dir - 1
+                    if self.dir == 0:
+                        self.dir = 4
+                else:
+                    self.dir = self.dir + 1
+                    if self.dir == 5:
+                        self.dir = 1
+            else:
+                if self.dir == 1:
+                    self.y = self.y - 1
+                elif self.dir == 2:
+                    self.x = self.x - 1
+                elif self.dir == 3: 
+                    self.y = self.y + 1
+                else:
+                    self.x = self.x + 1
         if not self.path:
-            self.idle = True
+            waiter.goal = (random.randint(1, 8), random.randint(1, 8))
+            waiter.astar()
+    #
+    #def BFS(self, goal):
+    #    restaurant.flush()
+    #    queue = [(self.x, self.y)]
+    #    while len(queue) > 0:
+    #        n = queue.pop(0)
+    #        restaurant.tiles[n[1]][n[0]].visited = True
+    #        if n == goal:
+    #            while not n == (self.x, self.y):
+    #                self.path.insert(0, n)
+    #                n = restaurant.tiles[n[1]][n[0]].parent
+    #            return
+    #        adj = restaurant.adjacent(n[1], n[0])
+    #        for item in adj:
+    #            x = item.x
+    #            y = item.y
+    #            if restaurant.tiles[y][x].canwalk and not restaurant.tiles[y][x].visited:
+    #                queue.append((x, y))
+    #                restaurant.tiles[y][x].parent = n
+  
+    def canWalk(self, state):
+        x = state[0]
+        y = state[1]
+        if state[2] == 1:
+            y = y - 1
+        elif state[2] == 2:
+            x = x - 1
+        elif state[2] == 3:
+            y = y + 1
+        elif state[2] == 4:
+            x = x + 1
+        return restaurant.tiles[y][x].canwalk
 
-    def BFS(self, goal):
-        restaurant.flush()
-        queue = [(self.x, self.y)]
-        while len(queue) > 0:
-            n = queue.pop(0)
-            restaurant.tiles[n[1]][n[0]].visited = True
-            if n == goal:
-                while not n == (self.x, self.y):
-                    self.path.insert(0, n)
-                    n = restaurant.tiles[n[1]][n[0]].parent
-                return
-            adj = restaurant.adjacent(n[1], n[0])
-            for item in adj:
-                x = item.x
-                y = item.y
-                if restaurant.tiles[y][x].canwalk and not restaurant.tiles[y][x].visited:
-                    queue.append((x, y))
-                    restaurant.tiles[y][x].parent = n
+    def goaltest(self, state):
+        if (state[0] == self.goal[0]) and (state[1] == self.goal[1]):
+            return True
+        return False
+
+    def succ(self, state):
+        s = []
+        
+        r = state[2] - 1
+        if r == 0: 
+            r = 4
+        s.append((("rotate", "right"), (state[0], state[1], r)))
+
+        l = state[2] + 1
+        if l == 5:
+            l = 1
+        s.append((("rotate", "left"), (state[0], state[1], l)))
+        if self.canWalk(state):
+            if state[2] == 1:
+                w = state[1] - 1
+                s.append((("walk"), (state[0], w, state[2])))
+            elif state[2] == 2:
+                w = state[0] - 1
+                s.append((("walk"), (w, state[1], state[2])))
+            elif state[2] == 3:
+                w = state[1] + 1
+                s.append((("walk"), (state[0], w, state[2])))
+            elif state[2] == 4:
+                w = state[0] + 1
+                s.append((("walk"), (w, state[1], state[2])))
+        return s
+
+    def f(self, node):
+        cost = restaurant.tiles[self.goal[1]][self.goal[0]].cost
+        return heuristic((node.state[0], node.state[1]), self.goal) + cost
+
+    def astar(self):
+        print("finding path to", self.goal)
+        #stan = (x, y, dir)
+        fringe = PriorityQueue()
+        explored = []
+        start = Node((self.x, self.y, self.dir), False, False)
+        fringe.put((1, start)) 
+
+        while True:
+            if fringe.empty():
+                return False
+            elem = fringe.get()[1]
+            if self.goaltest(elem.state):
+                self.path = []
+                while elem.action is not False:
+                    self.path.insert(0, elem.action)
+                    elem = elem.parent
+                print(self.path)
+                return True
+            explored.append(elem.state)
+            for (akcja, stan) in self.succ(elem.state):
+                x = Node(stan, elem, akcja)
+                p = self.f(x)
+                if not(stan in fringe.queue) and not(stan in explored):
+                    fringe.put((p, x))
+                elif (stan in fringe.queue):
+                    fringe.queue.remove(elem)
+                    fringe.put((p, x))
+
 
     def wait(self):
         self.idle = True
@@ -209,7 +325,9 @@ def drawScreen():
             tile = restaurant.tiles[ih][iw]
             if tile.canwalk:
                 pygame.draw.rect(display, (128, 128, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-                if tile.table:
+                if tile.cost == 5:
+                    pygame.draw.circle(display, (128, 128, 255), (iw * 32 + 17, ih * 32 + 17), 8)
+                if tile.table:  
                     if tile.clientState:
                         if tile.clientState == "decide":
                             pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
@@ -228,6 +346,18 @@ def drawScreen():
             else:
                 pygame.draw.rect(display, (128, 0, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
     pygame.draw.circle(display, (255, 255, 255), (waiter.x * 32 + 16, waiter.y * 32 + 16), 16)
+    #1234 NWSE
+    xx = 0
+    yy = 0
+    if waiter.dir == 1:
+        yy = -16
+    elif waiter.dir == 2:
+        xx = -16
+    elif waiter.dir == 3:
+        yy = 16
+    elif waiter.dir == 4:
+        xx = 16
+    pygame.draw.circle(display, (255, 0, 0), (waiter.x * 32 + 16+xx, waiter.y * 32 + 16+yy), 8)
 
     textsurface = font.render(str(restaurant.clients), False, (255, 255, 255))
     display.blit(textsurface, (WIDTH * 32 + 80, 300))
@@ -237,13 +367,16 @@ def drawScreen():
     display.blit(textsurface, (WIDTH * 32 + 80, 332))
 
 
-restaurant = Restaurant(3, 5)
-waiter = Agent(2, 2)
+restaurant = Restaurant(0, 0, 10)
+waiter = Agent(1,1)
 clientTime = 10
 totaltime = 0
-
 clock = pygame.time.Clock()
 ticks = 0
+
+waiter.goal = (1,1)
+waiter.astar()
+
 # draw info
 help = True
 if help:
@@ -272,6 +405,9 @@ if help:
     textsurface = font.render("kuchnia", False, (255, 255, 255))
     pygame.draw.rect(display, (255, 0, 255), (WIDTH * 32 + 10, 224, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 224))
+    textsurface = font.render("kaluza", False, (255, 255, 255))
+    pygame.draw.circle(display, (128, 128, 255), (WIDTH * 32 + 26, 272), 8)
+    display.blit(textsurface, (WIDTH * 32 + 50, 256))
 
     textsurface = font.render("klienci:", False, (255, 255, 255))
     display.blit(textsurface, (WIDTH * 32 + 20, 300))
@@ -284,7 +420,7 @@ while True:
             if event.key == pygame.K_F4:
                 pygame.quit()
             if event.key == pygame.K_F5:
-                restaurant = Restaurant(3, 5)
+                restaurant = Restaurant(3, 1, 10)
                 waiter = Agent(2, 2)
                 clientTime = 10
                 ticks = 0
@@ -319,69 +455,71 @@ while True:
                     restaurant.left = restaurant.left - 1
                     if restaurant.left == 0:
                         print("done in", totaltime)
-                        file = open('results.csv', 'a')
-                        file.write("\n")
-                        file.write(str(S_IDLE.index(IDLE)))
-                        file.write(",")
-                        file.write(str(S_FIRST.index(FIRST)))
-                        file.write(",")
-                        if totaltime > 1076:
-                            file.write(str(0))
-                        else:
-                            file.write(str(1))
-                        file.close()
-                        restaurant = Restaurant(3, 5)
-                        waiter = Agent(2, 2)
-                        clientTime = 10
-                        ticks = 0
                         totaltime = 0
-                        IDLE = random.choice(S_IDLE)
-                        FIRST = random.choice(S_FIRST)
-
+                        #file = open('results.csv', 'a')
+                        #file.write("\n")
+                        #file.write(str(S_IDLE.index(IDLE)))
+                        #file.write(",")
+                        #file.write(str(S_FIRST.index(FIRST)))
+                        #file.write(",")
+                        #if totaltime > 1076:
+                        #    file.write(str(0))
+                        #else:
+                        #    file.write(str(1))
+                        #file.close()
+                        #restaurant = Restaurant(3, 5)
+                        #waiter = Agent(2, 2)
+                        #clientTime = 10
+                        #ticks = 0
+                        #IDLE = random.choice(S_IDLE)
+                        #FIRST = random.choice(S_FIRST)
     # update waiter
-    if waiter.idle:
-        if not waiter.getTask():
-            if not waiter.path:
-                if IDLE == "kitchen":
-                    waiter.BFS(KITCHEN)
-                elif IDLE == "middle":
-                    waiter.BFS(MIDDLE)
+    waiter.walk()
+    # old update waiter
+    if False:
+        if waiter.idle:
+            if not waiter.getTask():
+                if not waiter.path:
+                    if IDLE == "kitchen":
+                        waiter.BFS(KITCHEN)
+                    elif IDLE == "middle":
+                        waiter.BFS(MIDDLE)
+                    else:
+                        waiter.wait()
                 else:
-                    waiter.wait()
-            else:
-                waiter.walk()
-    elif waiter.path:
-        waiter.walk()
-    if not waiter.orders and restaurant.tiles[waiter.y][waiter.x].clientState == "order" and not waiter.path:
-        restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
-        waiter.orders = (waiter.x, waiter.y)
-    if (waiter.x, waiter.y) == KITCHEN:
-        if waiter.orders:
-            restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
-            waiter.orders = False
-        elif not waiter.food:
-            for t in restaurant.kitchen:
-                if not t[2]:
-                    waiter.BFS((t[0], t[1]))
-                    restaurant.kitchen.remove(t)
-                    waiter.food = True
-                    waiter.idle = False
-                    break
-    elif waiter.food and not waiter.path:
-        restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
-        restaurant.tiles[waiter.y][waiter.x].client = 30
-        waiter.food = False
+                    waiter.walk()
+        elif waiter.path:
+            waiter.walk()
+        if not waiter.orders and restaurant.tiles[waiter.y][waiter.x].clientState == "order" and not waiter.path:
+            restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
+            waiter.orders = (waiter.x, waiter.y)
+        if (waiter.x, waiter.y) == KITCHEN:
+            if waiter.orders:
+                restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
+                waiter.orders = False
+            elif not waiter.food:
+                for t in restaurant.kitchen:
+                    if not t[2]:
+                        waiter.BFS((t[0], t[1]))
+                        restaurant.kitchen.remove(t)
+                        waiter.food = True
+                        waiter.idle = False
+                        break
+        elif waiter.food and not waiter.path:
+            restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
+            restaurant.tiles[waiter.y][waiter.x].client = 30
+            waiter.food = False
 
-    if ticks > 1500:
-        restaurant = Restaurant(3, 5)
-        waiter = Agent(2, 2)
-        clientTime = 10
-        ticks = 0
-        totaltime = 0
-        IDLE = random.choice(S_IDLE)
-        FIRST = random.choice(S_FIRST)
+    #if ticks > 1500:
+        #restaurant = Restaurant(3, 5)
+        #waiter = Agent(2, 2)
+        #clientTime = 10
+        #ticks = 0
+        #totaltime = 0
+        #IDLE = random.choice(S_IDLE)
+        #FIRST = random.choice(S_FIRST)
 
     drawScreen()
     pygame.display.update()
-    clock.tick(1500)
+    clock.tick(11)
     ticks = ticks + 1
