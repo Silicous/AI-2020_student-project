@@ -9,32 +9,15 @@ Użyłem drzew decyzyjnych.
 
 Potrawy, ich nazwa, rodzaj oraz charakterystyka.
 
-
-
-    menu = Context.fromstring(''' |meat|salad|meal|drink|cold|hot |
-                       Pork       |  X |     |    |     |    |  X |
-                       Espresso   |    |     |    |  X  |    |  X |
-                       Latte      |    |     |    |  X  |    |  X |
-                       Green Tea  |    |     |    |  X  | X  |    |
-                       Greek Salad|    |  X  |    |     | X  |    |
-                       Pizza      |    |     |  X |     |    |  X |''')
-
-
-
+    tree_format = ["dish", "served", "price", "origin", "cooked", "ingredients", "name"]
 
 Dane uczące:
     
-    training_data = [
-        ['meat','hot','Pork'],
-        ['salad','cold','Greek Salad'],
-        ['drink','hot','Espresso'],
-        ['drink','hot','Latte'],
-        ['drink','cold','Green Tea'],
-        ['meal','hot','Pizza'],
-        ['meal','cold','Wheat Pita'],
-    ]
-
-
+    dish -  (salad/soup/meal/coffee/tea/non-alcho drink)
+    served - (cold/hot/warm)
+    origin - (Worldwide/America/Europe/Asia)
+    cooked - (baked/boiled/mixed)
+    ingridients - (2/4)
 
 Dane testowe jest tworzone losowo w funkcji:  
  
@@ -51,17 +34,14 @@ Dane testowe jest tworzone losowo w funkcji:
         order.append(tmpr[0])
         order.append('order')
         return order
-   
-
-
-
+  
 
 ### Implementacja
 
 ####Drzewo:
 
 Klasy: 
-
+Klasa Question 
 #####Question
     class Queestion:
         def __init__(self, col, value):
@@ -73,7 +53,7 @@ Klasy:
             
         def __repr__(self):
         #just to print
-        
+Klasa Node      
 #####Node
     class Decision_Node():
     #contain the question and child nodes
@@ -91,7 +71,6 @@ Klasy:
  
 ### Biblioteki
 
-* concepts
 * random
 * numpy
 
