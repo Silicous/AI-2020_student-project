@@ -278,4 +278,16 @@ for each in range(0, len(training_data)-1):
 
 rand_data = [dish, served, origin, cooked, ingredients]
 
+
+def client_ordering():
+    #generate an order
+    order = []
+
+    for i in range(0, len(tree_format)-1):
+        tmpr = random.sample(rand_data[i], 1)
+        order.append(tmpr[0])
+
+    order.append('order')
+    return order
+
 #print(len(training_data))
