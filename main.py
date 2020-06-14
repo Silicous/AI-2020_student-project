@@ -10,7 +10,63 @@ import numpy as np
 from data import *
 from choice_tree import *
 
+import tensorflow as tf
+from keras import *
+import h5py
+
 pygame.init()
+
+
+WIN = 0
+LOSSE = 0
+DEFINE = 0
+IMG_SIZE = 64
+COLOR_CHANNELS = 3
+
+CATEGORIES = [
+"apple_pie",
+"club_sandwich",
+"greek_salad",
+"hamburger",
+"hot_dog",
+"ice_cream",
+"lasagna",
+"pizza",
+"steak",
+"waffles"
+]
+
+model = tf.keras.models.load_model('final1')
+
+with h5py.File('food_10_64x3_test.hdf5', "r") as f:
+    a_group_key = list(f.keys())[0]
+    data = list(f[a_group_key])
+    # print(len(data))
+    data = np.array(data)
+    X = np.array(data).reshape(-1, 64, 64, 3)
+with open('food_10_64x3_test.txt', 'r') as f:
+    y = f.read().split()
+    temp = []
+    for item in y:
+        temp.append(int(item))
+# print(len(X))
+# print(len(y))
+menu = []
+for i in range(len(X)):
+    menu.append([X[i], y[i]])
+random.shuffle(menu)
+
+def image_recognition():
+    LOSSE += 1
+    for _ in range(100):
+        photo = random.choice(menu)
+        prediction = model.predict(np.expand_dims(photo[0], axis=0))
+        max_value = prediction[0].max()
+        idx = np.where(prediction[0]==max_value)
+        if CATEGORIES[idx[0][0]] == waiter.order_list[-1]:
+            WIN += 1
+            break
+    print(WIN, LOSSE - WIN)
 
 # ai settings
 #S_IDLE = ("kitchen", "middle", "inplace")
@@ -160,6 +216,7 @@ class Agent:
         self.orders = []
         self.food = False
         self.goal = (0,0)
+        self.order_list = []
 
     def walk(self):
         if self.path:
@@ -178,7 +235,7 @@ class Agent:
                     self.y = self.y - 1
                 elif self.dir == 2:
                     self.x = self.x - 1
-                elif self.dir == 3: 
+                elif self.dir == 3:
                     self.y = self.y + 1
                 else:
                     self.x = self.x + 1
@@ -204,7 +261,7 @@ class Agent:
     #            if restaurant.tiles[y][x].canwalk and not restaurant.tiles[y][x].visited:
     #                queue.append((x, y))
     #                restaurant.tiles[y][x].parent = n
-  
+
     def canWalk(self, state):
         x = state[0]
         y = state[1]
@@ -225,9 +282,9 @@ class Agent:
 
     def succ(self, state):
         s = []
-        
+
         r = state[2] - 1
-        if r == 0: 
+        if r == 0:
             r = 4
         s.append((("rotate", "right"), (state[0], state[1], r)))
 
@@ -260,7 +317,7 @@ class Agent:
         fringe = PriorityQueue()
         explored = []
         start = Node((self.x, self.y, self.dir), False, False)
-        fringe.put((1, start)) 
+        fringe.put((1, start))
 
         while True:
             if fringe.empty():
@@ -328,7 +385,7 @@ def drawScreen():
                 pygame.draw.rect(display, (128, 128, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 if tile.cost == 5:
                     pygame.draw.circle(display, (128, 128, 255), (iw * 32 + 17, ih * 32 + 17), 8)
-                if tile.table:  
+                if tile.table:
                     if tile.clientState:
                         if tile.clientState == "decide":
                             pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
@@ -494,6 +551,8 @@ while True:
         if not waiter.orders and restaurant.tiles[waiter.y][waiter.x].clientState == "order" and not waiter.path:
             restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
             waiter.orders = (waiter.x, waiter.y)
+            DEFINE += 1
+            waiter.order_list.append(random.choice(CATEGORIES))
         if (waiter.x, waiter.y) == KITCHEN:
             if waiter.orders:
                 restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
@@ -501,6 +560,7 @@ while True:
             elif not waiter.food:
                 for t in restaurant.kitchen:
                     if not t[2]:
+                        image_recognition()
                         waiter.BFS((t[0], t[1]))
                         restaurant.kitchen.remove(t)
                         waiter.food = True
