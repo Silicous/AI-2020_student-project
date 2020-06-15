@@ -66,6 +66,7 @@ def image_recognition():
         if CATEGORIES[idx[0][0]] == waiter.order_list[-1]:
             WIN += 1
             break
+        waiter.order_list.pop()
     print(WIN, LOSSE - WIN)
 
 # ai settings
@@ -552,7 +553,7 @@ while True:
             restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
             waiter.orders = (waiter.x, waiter.y)
             DEFINE += 1
-            waiter.order_list.append(random.choice(CATEGORIES))
+            waiter.order_list.insert(0, random.choice(CATEGORIES))
         if (waiter.x, waiter.y) == KITCHEN:
             if waiter.orders:
                 restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
