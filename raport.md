@@ -38,11 +38,10 @@ Dane testowe jest tworzone losowo w funkcji:
 
 ### Implementacja
 
-####Drzewo:
+#### Drzewo:
 
 Klasy: 
-Klasa Question 
-#####Question
+##### Question
     class Queestion:
         def __init__(self, col, value):
             self.col = col      #column
@@ -52,9 +51,9 @@ Klasa Question
         #compare val in example with val in the question
             
         def __repr__(self):
-        #just to print
-Klasa Node      
-#####Node
+        #just to print    
+        
+##### Node
     class Decision_Node():
     #contain the question and child nodes
     def __init__(self, quest, t_branch, f_branch):
@@ -62,7 +61,7 @@ Klasa Node
         self.t_branch = t_branch
         self.f_branch = f_branch
         
-#####Leaf
+##### Leaf
     class Leaf:
     #contain a number of how many times the label has appeared in dataset
     def __init__(self, rows):
