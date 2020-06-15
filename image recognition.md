@@ -1,0 +1,1 @@
+# Rozpoznawanie obrazu wykorzystująć konwolucyjną sieć neuronową
