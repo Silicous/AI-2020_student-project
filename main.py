@@ -10,6 +10,9 @@ import numpy as np
 from data import *
 from choice_tree import *
 
+from joblib import load
+from customertree import objects
+
 import tensorflow as tf
 from keras import *
 import h5py
@@ -35,6 +38,9 @@ CATEGORIES = [
 "steak",
 "waffles"
 ]
+
+food_model = load("models/food_model.joblib")
+drink_model = load("models/drink_model.joblib")
 
 model = tf.keras.models.load_model('final1')
 
@@ -103,6 +109,84 @@ def client_ordering():
     return order
 ###
 
+
+class Client:
+    def __init__(self):
+        self.gender = random.choice(["Man","Woman"])
+        self.outfit = random.choice(["Casual","Elegant"])
+        self.cash = random.choice([20,20,20,30,30,50,50,70,80,90,100,100,120,
+                                   120,150,200,300,500])
+        self.time = random.choice(["Afternoon","Evening"])
+        self.vege = random.choice(["No","No","No","No","Yes"])
+        self.age = random.randint(12,80)
+
+    def __str__(self):
+        return (self.gender + "  Age: " + str(self.age) +"  "+ self.outfit+
+                "  $"+ str(self.cash)+ "  Vege: "+ self.vege)
+
+def order_drink(clt):
+    frame = []
+    if clt.gender == "Man":
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.age  > 17:
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.outfit == "Casual":
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.cash > 100:
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.time == "Evening":
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.vege == "No":
+        frame.append(0)
+    else:
+        frame.append(1)
+
+    drink_predict = drink_model.predict([frame])
+    drink_index = drink_predict[0]
+
+    return  objects[-1][drink_index]
+
+def order_food(clt):
+    frame = []
+    if clt.gender == "Man":
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.age  > 17:
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.outfit == "Casual":
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.cash > 100:
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.time == "Evening":
+        frame.append(0)
+    else:
+        frame.append(1)
+    if clt.vege == "No":
+        frame.append(0)
+    else:
+        frame.append(1)
+
+    food_predict = food_model.predict([frame])
+    food_index = food_predict[0]
+
+    return objects[-2][food_index]
 
 ###
 class Node:
@@ -553,7 +637,8 @@ while True:
             restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
             waiter.orders = (waiter.x, waiter.y)
             DEFINE += 1
-            waiter.order_list.insert(0, random.choice(CATEGORIES))
+            cl = Client()
+            waiter.order_list.insert(0,client_ordering_food(cl))
         if (waiter.x, waiter.y) == KITCHEN:
             if waiter.orders:
                 restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
