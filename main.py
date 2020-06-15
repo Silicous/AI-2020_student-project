@@ -601,6 +601,15 @@ while True:
                     if restaurant.left == 0:
                         print("done in", totaltime)
                         totaltime = 0
+                        
+                        restaurant = Restaurant(3, 5)
+                        waiter = Agent(2, 2)
+                        clientTime = 10
+                        ticks = 0
+                        totaltime = 0
+                        IDLE = random.choice(S_IDLE)
+                        FIRST = random.choice(S_FIRST)
+                        
                         #file = open('results.csv', 'a')
                         #file.write("\n")
                         #file.write(str(S_IDLE.index(IDLE)))
