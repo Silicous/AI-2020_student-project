@@ -3,10 +3,13 @@
 
 ## Krótki opis
 
-
+Agent porusza się po kracie, przyjmuje zamówienia
 
 ## Technologie:
-#### konwolucyjna sieć neuronowa
+- Python3
+- Drzewa decyzyjne
+- Tensorflow (konwolucyjna sieć neuronowa)
+- Pandas
 
 
 ## Podprojekty:
@@ -18,6 +21,12 @@ Kelner przy odbieraniu zamówienia w kuchni przeszukuje czekające tam dania w p
 
 ### Projekt 2
 
+Podprojekt polegający na użyciu metody drzew decyzyjnych aby otrzymać optymalne ustawienia agenta na podstawie danych z losowo generowanych sytuacji.
+
 ### Projekt 3
+
+Podprojekt polegający na użyciu metody drzew decyzyjnych aby wybrać danie na podstawie zamówienia przez klienta.
+
+##### Serhii Hromov s442778
 
 ### Projekt 4
