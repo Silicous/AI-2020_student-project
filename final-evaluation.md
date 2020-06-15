@@ -8,15 +8,16 @@ Agent porusza się po kracie, przyjmuje zamówienia
 ## Technologie:
 - Python3
 - Drzewa decyzyjne
-- Tensorflow (konwolucyjna sieć neuronowa)
+- Tensorflow with Keras API
 - Pandas
 
 
 ## Podprojekty:
 
 ### Projekt 1
-#### Rozpoznawanie obrazu wykorzystująć konwolucyjną sieć neuronową
-Kelner przy odbieraniu zamówienia w kuchni przeszukuje czekające tam dania w poszukiwaniu zamówienia, a następnie zanosi je do klienta. 
+#### Rozpoznawanie obrazu wykorzystując konwolucyjną sieć neuronową
+Podprojekt polegający na użyciu konwolucyjnej sieci neuronowej do rozpoznania ze potrawy ze zdjęcia.
+ 
 ##### Karol Idaszak s444383
 
 ### Projekt 2
