@@ -302,6 +302,7 @@ class Agent:
         self.food = False
         self.goal = (0,0)
         self.order_list = []
+        self.order_to_kitchen = []
 
     def walk(self):
         if self.path:
@@ -592,6 +593,7 @@ while True:
                     restaurant.tiles[table[1]][table[0]].clientState = "order"
             elif restaurant.tiles[table[1]][table[0]].clientState == "eat":
                 restaurant.tiles[table[1]][table[0]].client = restaurant.tiles[table[1]][table[0]].client - 1
+                waiter.order_to_kitchen.clear()
                 if restaurant.tiles[table[1]][table[0]].client == 0:
                     restaurant.tiles[table[1]][table[0]].clientState = False
                     totaltime = totaltime + ticks
@@ -636,6 +638,7 @@ while True:
         if not waiter.orders and restaurant.tiles[waiter.y][waiter.x].clientState == "order" and not waiter.path:
             restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
             waiter.orders = (waiter.x, waiter.y)
+            waiter.order_to_kitchen.append(client_ordering())
             DEFINE += 1
             cl = Client()
             waiter.order_list.insert(0,client_ordering_food(cl))
@@ -643,6 +646,8 @@ while True:
             if waiter.orders:
                 restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
                 waiter.orders = False
+                for order in waiter.order_to_kitchen:
+                    print("Passed: %s. Prediction: %s" % (order, print_leaf(classify(order, tree))))
             elif not waiter.food:
                 for t in restaurant.kitchen:
                     if not t[2]:
