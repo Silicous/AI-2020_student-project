@@ -10,14 +10,15 @@ Agent porusza się po kracie, przyjmuje zamówienia
 - Drzewa decyzyjne
 - Tensorflow with Keras API
 - Pandas
-
+- Scikit-learn
+- Joblib
 
 ## Podprojekty:
 
 ### Projekt 1
 #### Rozpoznawanie obrazu wykorzystując konwolucyjną sieć neuronową
 Podprojekt polegający na użyciu konwolucyjnej sieci neuronowej do rozpoznania ze potrawy ze zdjęcia.
- 
+
 ##### Karol Idaszak s444383
 
 ### Projekt 2
@@ -31,3 +32,7 @@ Podprojekt polegający na użyciu metody drzew decyzyjnych aby wybrać danie na 
 ##### Serhii Hromov s442778
 
 ### Projekt 4
+
+Podprojekt polegający na użyciu metody drzew decyzyjnych, aby stworzyć model, na podstawie którego klient wybierze danie jakie chce zamówić.
+
+#### Piotr Dębski s444362
