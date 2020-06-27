@@ -90,7 +90,11 @@ MIDDLE = (floor(WIDTH / 2), floor(HEIGHT / 2))
 
 display = pygame.display.set_mode((WIDTH * 32 + 200, HEIGHT * 32))
 tileFoil = pygame.image.load('tile.jpg')
-waiterAct = pygame.image.load('act1.png')
+waiterAct1 = pygame.image.load('act1.png')
+waiterAct2 = pygame.image.load('act2.png')
+waiterAct3 = pygame.image.load('act3.png')
+waiterAct4 = pygame.image.load('act4.png')
+waiterAct = [waiterAct1, waiterAct2, waiterAct3, waiterAct4]
 tableEmpty = pygame.image.load('table.png')
 tableOrder = pygame.image.load('tableOrder.png')
 tableDecide = pygame.image.load('tableDecide.png')
@@ -475,29 +479,36 @@ def drawScreen():
 				if tile.table:
                     if tile.clientState:
                         if tile.clientState == "decide":
-                            pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-                            #display.blit(tableDecide, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableDecide, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "order":
-                            pygame.draw.rect(display, (0, 255, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-                            #display.blit(tableOrder, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (0, 255, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableOrder, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "wait":
-                            pygame.draw.rect(display, (255, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-                            #display.blit(tableWait, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (255, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableWait, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "eat":
-                            pygame.draw.rect(display, (128, 64, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-                            #display.blit(tableEat, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (128, 64, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableEat, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                     else:
                         pygame.draw.rect(display, (64, 64, 64), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         #display.blit(tableEmpty, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 if tile.kitchen:
                     pygame.draw.rect(display, (255, 0, 255), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                    
+                    
+                # WE CAN UNCOMMENT IT, DON'T WE?    
                 # if tile.visited:
                 #   pygame.draw.rect(display, (64,0,64), (iw * 32 + 1, ih * 32+1, 14, 14))
             else:
                 pygame.draw.rect(display, (128, 0, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-    pygame.draw.circle(display, (255, 255, 255), (waiter.x * 32 + 16, waiter.y * 32 + 16), 16)
-    #display.blit(waiterAct, (waiter.x * 32 + 8, waiter.y * 32 + 8))
-    #1234 NWSE
+    
+    #pygame.draw.circle(display, (255, 255, 255), (waiter.x * 32 + 16, waiter.y * 32 + 16), 16)
+    #Render actor's frames according to the direction
+    display.blit(waiterAct[waiter.dir - 1], (waiter.x * 32 + 8, waiter.y * 32 + 8))
+
+    '''
+    # 1234 NWSE
     xx = 0
     yy = 0
     if waiter.dir == 1:
@@ -509,6 +520,7 @@ def drawScreen():
     elif waiter.dir == 4:
         xx = 16
     pygame.draw.circle(display, (255, 0, 0), (waiter.x * 32 + 16+xx, waiter.y * 32 + 16+yy), 8)
+    '''
 
     textsurface = font.render(str(restaurant.clients), False, (255, 255, 255))
     display.blit(textsurface, (WIDTH * 32 + 80, 300))
