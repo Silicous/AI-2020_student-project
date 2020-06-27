@@ -32,7 +32,12 @@ MIDDLE = (floor(WIDTH / 2), floor(HEIGHT / 2))
 display = pygame.display.set_mode((WIDTH * 32 + 200, HEIGHT * 32))
 tileFoil = pygame.image.load('tile.jpg')
 waiterAct = pygame.image.load('act1.png')
-waiterAct.set_colorkey((255, 255, 255))
+tableEmpty = pygame.image.load('table.png')
+tableOrder = pygame.image.load('tableOrder.png')
+tableDecide = pygame.image.load('tableDecide.png')
+tableWait = pygame.image.load('tableWait.png')
+tableEat = pygame.image.load('tableEat.png')
+wall = pygame.image.load('wall.png')
 
 # eating time
 EAT_TIME = 15
@@ -247,21 +252,27 @@ def drawScreen():
                 if tile.table:
                     if tile.clientState:
                         if tile.clientState == "decide":
-                            pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableDecide, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "order":
-                            pygame.draw.rect(display, (0, 255, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (0, 255, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableOrder, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "wait":
-                            pygame.draw.rect(display, (255, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (255, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableWait, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "eat":
-                            pygame.draw.rect(display, (128, 64, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            #pygame.draw.rect(display, (128, 64, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            display.blit(tableEat, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                     else:
-                        pygame.draw.rect(display, (64, 64, 64), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                        #pygame.draw.rect(display, (64, 64, 64), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                        display.blit(tableEmpty, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 if tile.kitchen:
                     pygame.draw.rect(display, (255, 0, 255), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 # if tile.visited:
-                #   pygame.draw.rect(display, (64,0,64), (iw * 32 + 1, ih * 32+1, 14, 14))
+                #   pygame.draw.rect(display, (200, 16, 0), (iw * 32 + 1, ih * 32+1, 14, 14))
             else:
-                pygame.draw.rect(display, (128, 0, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                #pygame.draw.rect(display, (128, 0, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                display.blit(wall, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
     #pygame.draw.circle(display, (255, 255, 255), (waiter.x * 32 + 16, waiter.y * 32 + 16), 16)
     display.blit(waiterAct, (waiter.x * 32 + 8, waiter.y * 32 + 8))
 
