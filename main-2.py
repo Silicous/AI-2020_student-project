@@ -30,6 +30,9 @@ KITCHEN = (1, 1)
 MIDDLE = (floor(WIDTH / 2), floor(HEIGHT / 2))
 
 display = pygame.display.set_mode((WIDTH * 32 + 200, HEIGHT * 32))
+tileFoil = pygame.image.load('tile.jpg')
+waiterAct = pygame.image.load('act1.png')
+waiterAct.set_colorkey((255, 255, 255))
 
 # eating time
 EAT_TIME = 15
@@ -139,18 +142,45 @@ class Agent:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.dir = 1 #1234 NorWesSouEas
         self.path = []
         self.idle = True
         self.orders = []
         self.food = False
         self.ordered_food = []
+        self.goal = (0,0)
 
     def walk(self):
+        #'''
         t = self.path.pop(0)
         self.x = t[0]
         self.y = t[1]
         if not self.path:
             self.idle = True
+
+        '''
+        t = self.path.pop(0)
+        if t[0] == "rotate":
+            if t[1] == "right":
+                self.dir = self.dir - 1
+                if self.dir == 0:
+                    self.dir = 4
+            else:
+                self.dir = self.dir + 1
+                if self.dir == 5:
+                    self.dir = 1
+        else:
+            if self.dir == 1:
+                self.y = self.y - 1
+            elif self.dir == 2:
+                self.x = self.x - 1
+            elif self.dir == 3:
+                self.y = self.y + 1
+            else:
+                self.x = self.x + 1
+        if not self.path:
+            waiter.goal = (random.randint(1, 8), random.randint(1, 8))
+        '''
 
     def BFS(self, goal):
         restaurant.flush()
@@ -212,7 +242,8 @@ def drawScreen():
         for iw in range(WIDTH):
             tile = restaurant.tiles[ih][iw]
             if tile.canwalk:
-                pygame.draw.rect(display, (128, 128, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                #pygame.draw.rect(display, (128, 128, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                display.blit(tileFoil, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 if tile.table:
                     if tile.clientState:
                         if tile.clientState == "decide":
@@ -231,7 +262,23 @@ def drawScreen():
                 #   pygame.draw.rect(display, (64,0,64), (iw * 32 + 1, ih * 32+1, 14, 14))
             else:
                 pygame.draw.rect(display, (128, 0, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-    pygame.draw.circle(display, (255, 255, 255), (waiter.x * 32 + 16, waiter.y * 32 + 16), 16)
+    #pygame.draw.circle(display, (255, 255, 255), (waiter.x * 32 + 16, waiter.y * 32 + 16), 16)
+    display.blit(waiterAct, (waiter.x * 32 + 8, waiter.y * 32 + 8))
+
+    '''
+    xx = 0
+    yy = 0
+    if waiter.dir == 1:
+        yy = -16
+    elif waiter.dir == 2:
+        xx = -16
+    elif waiter.dir == 3:
+        yy = 16
+    elif waiter.dir == 4:
+        xx = 16
+    pygame.draw.circle(display, (255, 0, 0), (waiter.x * 32 + 16 + xx, waiter.y * 32 + 16 + yy), 8)
+    '''
+
 
     textsurface = font.render(str(restaurant.clients), False, (255, 255, 255))
     display.blit(textsurface, (WIDTH * 32 + 80, 300))
