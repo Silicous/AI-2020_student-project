@@ -540,32 +540,49 @@ ticks = 0
 
 # draw info
 help = True
+
 if help:
     font = pygame.font.SysFont('Arial', 18)
+    
     textsurface = font.render("kelner", False, (255, 255, 255))
-    pygame.draw.circle(display, (255, 255, 255), (WIDTH * 32 + 26, 16), 16)
+    #pygame.draw.circle(display, (255, 255, 255), (WIDTH * 32 + 26, 16), 16)
+    display.blit(waiterAct3, (WIDTH * 32 + 18, 4))
     display.blit(textsurface, (WIDTH * 32 + 50, 0))
+    
     textsurface = font.render("sciana", False, (255, 255, 255))
-    pygame.draw.rect(display, (128, 0, 128), (WIDTH * 32 + 10, 32, 32 - 1, 32 - 1))
+    #pygame.draw.rect(display, (128, 0, 128), (WIDTH * 32 + 10, 32, 32 - 1, 32 - 1))
+    display.blit(wall, (WIDTH * 32 + 10, 32, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 32))
+    
     textsurface = font.render("stolik - pusty", False, (255, 255, 255))
-    pygame.draw.rect(display, (64, 64, 64), (WIDTH * 32 + 10, 64, 32 - 1, 32 - 1))
+    #pygame.draw.rect(display, (64, 64, 64), (WIDTH * 32 + 10, 64, 32 - 1, 32 - 1))
+    display.blit(tableEmpty, (WIDTH * 32 + 10, 64, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 64))
+    
     textsurface = font.render("stolik - decyduje", False, (255, 255, 255))
-    pygame.draw.rect(display, (0, 128, 0), (WIDTH * 32 + 10, 96, 32 - 1, 32 - 1))
+    #pygame.draw.rect(display, (0, 128, 0), (WIDTH * 32 + 10, 96, 32 - 1, 32 - 1))
+    display.blit(tableDecide, (WIDTH * 32 + 10, 96, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 96))
+    
     textsurface = font.render("stolik - zamawia", False, (255, 255, 255))
-    pygame.draw.rect(display, (0, 255, 0), (WIDTH * 32 + 10, 128, 32 - 1, 32 - 1))
+    #pygame.draw.rect(display, (0, 255, 0), (WIDTH * 32 + 10, 128, 32 - 1, 32 - 1))
+    display.blit(tableOrder, (WIDTH * 32 + 10, 128, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 128))
+    
     textsurface = font.render("stolik - czeka", False, (255, 255, 255))
-    pygame.draw.rect(display, (255, 128, 0), (WIDTH * 32 + 10, 160, 32 - 1, 32 - 1))
+    #pygame.draw.rect(display, (255, 128, 0), (WIDTH * 32 + 10, 160, 32 - 1, 32 - 1))
+    display.blit(tableWait, (WIDTH * 32 + 10, 160, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 160))
+    
     textsurface = font.render("stolik - je", False, (255, 255, 255))
-    pygame.draw.rect(display, (128, 64, 0), (WIDTH * 32 + 10, 192, 32 - 1, 32 - 1))
+    #pygame.draw.rect(display, (128, 64, 0), (WIDTH * 32 + 10, 192, 32 - 1, 32 - 1))
+    display.blit(tableWait, (WIDTH * 32 + 10, 192, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 192))
+    
     textsurface = font.render("kuchnia", False, (255, 255, 255))
     pygame.draw.rect(display, (255, 0, 255), (WIDTH * 32 + 10, 224, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 224))
+    
     textsurface = font.render("kaluza", False, (255, 255, 255))
     pygame.draw.circle(display, (128, 128, 255), (WIDTH * 32 + 26, 272), 8)
     display.blit(textsurface, (WIDTH * 32 + 50, 256))
