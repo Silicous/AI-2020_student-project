@@ -62,6 +62,7 @@ for i in range(len(X)):
     menu.append([X[i], y[i]])
 random.shuffle(menu)
 
+'''
 def image_recognition():
     LOSSE += 1
     for _ in range(100):
@@ -74,7 +75,7 @@ def image_recognition():
             break
         waiter.order_list.pop()
     #print(WIN, LOSSE - WIN)
-
+'''
 # ai settings
 #S_IDLE = ("kitchen", "middle", "inplace")
 #S_FIRST = ("order", "food")
@@ -105,7 +106,6 @@ wall = pygame.image.load('wall.png')
 EAT_TIME = 15
 
 tree = build_tree(training_data)
-#order_len = len(tree_format)
 #print_tree(tree)
 
 
@@ -135,6 +135,7 @@ class Client:
         return (self.gender + "  Age: " + str(self.age) +"  "+ self.outfit+
                 "  $"+ str(self.cash)+ "  Vege: "+ self.vege)
 
+'''
 def order_drink(clt):
     frame = []
     if clt.gender == "Man":
@@ -166,7 +167,8 @@ def order_drink(clt):
     drink_index = drink_predict[0]
 
     return  objects[-1][drink_index]
-
+'''
+'''
 def order_food(clt):
     frame = []
     if clt.gender == "Man":
@@ -198,6 +200,8 @@ def order_food(clt):
     food_index = food_predict[0]
 
     return objects[-2][food_index]
+'''
+
 
 ###
 class Node:
@@ -453,7 +457,7 @@ class Agent:
         #jesli sie zatrzymal w kuchni z zamowieniem to oddaje zamowienie
         if waiter.x == 1 and waiter.y == 1 and waiter.orders:
             restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
-            waiter.orders = False 
+            waiter.orders = False
         #jesli sie zatrzymal w kuchni bez zamowienia to bierze jedzenie
         if waiter.x == 1 and waiter.y == 1 and not waiter.orders:
             for t in restaurant.kitchen:
@@ -468,6 +472,7 @@ class Agent:
 
 def drawScreen():
     pygame.draw.rect(display, (0, 0, 0), (0, 0, HEIGHT * 32, WIDTH * 32))
+
     for ih in range(HEIGHT):
         for iw in range(WIDTH):
             tile = restaurant.tiles[ih][iw]
@@ -476,35 +481,32 @@ def drawScreen():
                 display.blit(tileFoil, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 if tile.cost == 5:
                     pygame.draw.circle(display, (128, 128, 255), (iw * 32 + 17, ih * 32 + 17), 8)
-				if tile.table:
+                if tile.table:
                     if tile.clientState:
                         if tile.clientState == "decide":
-                            #pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            # pygame.draw.rect(display, (0, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                             display.blit(tableDecide, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "order":
-                            #pygame.draw.rect(display, (0, 255, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            # pygame.draw.rect(display, (0, 255, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                             display.blit(tableOrder, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "wait":
-                            #pygame.draw.rect(display, (255, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            # pygame.draw.rect(display, (255, 128, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                             display.blit(tableWait, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         elif tile.clientState == "eat":
-                            #pygame.draw.rect(display, (128, 64, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                            # pygame.draw.rect(display, (128, 64, 0), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                             display.blit(tableEat, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                     else:
-                        pygame.draw.rect(display, (64, 64, 64), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-                        #display.blit(tableEmpty, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                        # pygame.draw.rect(display, (64, 64, 64), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                        display.blit(tableEmpty, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 if tile.kitchen:
                     pygame.draw.rect(display, (255, 0, 255), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-                    
-                    
-                # WE CAN UNCOMMENT IT, DON'T WE?    
                 # if tile.visited:
                 #   pygame.draw.rect(display, (64,0,64), (iw * 32 + 1, ih * 32+1, 14, 14))
             else:
-                pygame.draw.rect(display, (128, 0, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
-    
+                #pygame.draw.rect(display, (128, 0, 128), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                display.blit(wall, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+
     #pygame.draw.circle(display, (255, 255, 255), (waiter.x * 32 + 16, waiter.y * 32 + 16), 16)
-    #Render actor's frames according to the direction
     display.blit(waiterAct[waiter.dir - 1], (waiter.x * 32 + 8, waiter.y * 32 + 8))
 
     '''
@@ -521,6 +523,7 @@ def drawScreen():
         xx = 16
     pygame.draw.circle(display, (255, 0, 0), (waiter.x * 32 + 16+xx, waiter.y * 32 + 16+yy), 8)
     '''
+
 
     textsurface = font.render(str(restaurant.clients), False, (255, 255, 255))
     display.blit(textsurface, (WIDTH * 32 + 80, 300))
@@ -540,49 +543,39 @@ ticks = 0
 
 # draw info
 help = True
-
 if help:
     font = pygame.font.SysFont('Arial', 18)
-    
     textsurface = font.render("kelner", False, (255, 255, 255))
     #pygame.draw.circle(display, (255, 255, 255), (WIDTH * 32 + 26, 16), 16)
     display.blit(waiterAct3, (WIDTH * 32 + 18, 4))
     display.blit(textsurface, (WIDTH * 32 + 50, 0))
-    
     textsurface = font.render("sciana", False, (255, 255, 255))
     #pygame.draw.rect(display, (128, 0, 128), (WIDTH * 32 + 10, 32, 32 - 1, 32 - 1))
     display.blit(wall, (WIDTH * 32 + 10, 32, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 32))
-    
     textsurface = font.render("stolik - pusty", False, (255, 255, 255))
     #pygame.draw.rect(display, (64, 64, 64), (WIDTH * 32 + 10, 64, 32 - 1, 32 - 1))
     display.blit(tableEmpty, (WIDTH * 32 + 10, 64, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 64))
-    
     textsurface = font.render("stolik - decyduje", False, (255, 255, 255))
     #pygame.draw.rect(display, (0, 128, 0), (WIDTH * 32 + 10, 96, 32 - 1, 32 - 1))
     display.blit(tableDecide, (WIDTH * 32 + 10, 96, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 96))
-    
     textsurface = font.render("stolik - zamawia", False, (255, 255, 255))
     #pygame.draw.rect(display, (0, 255, 0), (WIDTH * 32 + 10, 128, 32 - 1, 32 - 1))
     display.blit(tableOrder, (WIDTH * 32 + 10, 128, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 128))
-    
     textsurface = font.render("stolik - czeka", False, (255, 255, 255))
     #pygame.draw.rect(display, (255, 128, 0), (WIDTH * 32 + 10, 160, 32 - 1, 32 - 1))
     display.blit(tableWait, (WIDTH * 32 + 10, 160, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 160))
-    
     textsurface = font.render("stolik - je", False, (255, 255, 255))
     #pygame.draw.rect(display, (128, 64, 0), (WIDTH * 32 + 10, 192, 32 - 1, 32 - 1))
-    display.blit(tableWait, (WIDTH * 32 + 10, 192, 32 - 1, 32 - 1))
+    display.blit(tableEat, (WIDTH * 32 + 10, 192, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 192))
-    
     textsurface = font.render("kuchnia", False, (255, 255, 255))
     pygame.draw.rect(display, (255, 0, 255), (WIDTH * 32 + 10, 224, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 224))
-    
     textsurface = font.render("kaluza", False, (255, 255, 255))
     pygame.draw.circle(display, (128, 128, 255), (WIDTH * 32 + 26, 272), 8)
     display.blit(textsurface, (WIDTH * 32 + 50, 256))
@@ -640,7 +633,7 @@ while True:
                     restaurant.tiles[table[1]][table[0]].clientState = False
                     totaltime = totaltime + ticks
                     restaurant.left = restaurant.left - 1
-    #update waiter         
+    #update waiter
     if project == 0:
         if waiter.idle:
             waiter.getTask()
