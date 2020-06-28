@@ -76,11 +76,13 @@ def image_recognition():
         waiter.order_list.pop()
     #print(WIN, LOSSE - WIN)
 '''
-# ai settings
-#S_IDLE = ("kitchen", "middle", "inplace")
-#S_FIRST = ("order", "food")
+tickTime = 15
 
-IDLE = "inplace"
+# ai settings
+S_IDLE = ("kitchen", "middle", "inplace")
+S_FIRST = ("order", "food")
+
+IDLE = "kitchen"
 FIRST = "order"
 
 HEIGHT = 10
@@ -452,27 +454,80 @@ class Agent:
                 self.idle = False
                 return True
         return False
-
+    def getTaskTest(self):
+        if FIRST == "food":
+            #jesli w kuchni jest gotowe danie to po nie idzie
+            for t in restaurant.kitchen:
+                if t[2] == 0:
+                    self.astar(KITCHEN)
+                    self.idle = False
+                    return True
+            #jesli ktos chce jedzenie a kelner je trzyma
+            for table in restaurant.tables:
+                if restaurant.tiles[table[1]][table[0]].clientState == "wait" and waiter.food:
+                    self.astar((table[0], table[1]))
+                    self.idle = False
+                    return True
+            #jesli ktos chce zamowic to do niego idzie
+            if not self.orders and not self.food:
+                for table in restaurant.tables:
+                    if restaurant.tiles[table[1]][table[0]].clientState == "order":
+                        self.astar((table[0], table[1]))
+                        self.idle = False
+                        return True
+            #jesli trzyma zamowienie to idzie do kuchni
+            if self.orders:
+                self.astar(KITCHEN)
+                self.idle = False
+                return True
+        else:
+            self.getTask()
+        return False
     def endTask(self):
-        #jesli sie zatrzymal na stoliku ktory chce zamowic to bierze zamowienie
         if restaurant.tiles[waiter.y][waiter.x].clientState == "order" and not waiter.food and not waiter.orders:
             restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
             waiter.orders = (waiter.x, waiter.y)
-        #jesli sie zatrzymal w kuchni z zamowieniem to oddaje zamowienie
         if waiter.x == 1 and waiter.y == 1 and waiter.orders:
             restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
             waiter.orders = False
-        #jesli sie zatrzymal w kuchni bez zamowienia to bierze jedzenie
         if waiter.x == 1 and waiter.y == 1 and not waiter.orders:
             for t in restaurant.kitchen:
                 if t[2] == 0:
                      restaurant.kitchen.remove(t)
                      waiter.food = True
-        #jesli sie zatrzymal na stoliku z jedzeniem to je daje
         if restaurant.tiles[waiter.y][waiter.x].clientState == "wait" and waiter.food and not waiter.orders:
             restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
+            restaurant.tiles[waiter.y][waiter.x].client = 20
             self.food = False
         self.idle = True
+    def endTaskTest(self):
+        if IDLE == "inplace":
+            self.endTask()
+            return True
+        hasTask = False
+        if restaurant.tiles[waiter.y][waiter.x].clientState == "order" and not waiter.food and not waiter.orders:
+            restaurant.tiles[waiter.y][waiter.x].clientState = "wait"
+            waiter.orders = (waiter.x, waiter.y)
+            hasTask = True
+        if waiter.x == 1 and waiter.y == 1 and waiter.orders:
+            restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
+            waiter.orders = False
+        if waiter.x == 1 and waiter.y == 1 and not waiter.orders:
+            for t in restaurant.kitchen:
+                if t[2] == 0:
+                    restaurant.kitchen.remove(t)
+                    waiter.food = True
+                    hasTask = True
+                    return True
+        if restaurant.tiles[waiter.y][waiter.x].clientState == "wait" and waiter.food and not waiter.orders:
+            restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
+            restaurant.tiles[waiter.y][waiter.x].client = 20
+            self.food = False
+        self.idle = True
+        if IDLE == "kitchen":
+            self.astar(KITCHEN)
+        else:
+            self.astar(MIDDLE)
 
 def drawScreen():
     pygame.draw.rect(display, (0, 0, 0), (0, 0, HEIGHT * 32, WIDTH * 32))
@@ -597,6 +652,7 @@ while True:
             if event.key == pygame.K_0:
                 project = 0
             if event.key == pygame.K_1:
+                tickTime = 1000
                 project = 1
             #Execute project
             if event.key == pygame.K_2:
@@ -640,6 +696,26 @@ while True:
                     restaurant.tiles[table[1]][table[0]].clientState = False
                     totaltime = totaltime + ticks
                     restaurant.left = restaurant.left - 1
+                    if restaurant.left == 0 and project == 1:
+                        print("done in", totaltime)
+                        file = open('results.csv', 'a')
+                        file.write("\n")
+                        file.write(str(S_IDLE.index(IDLE)))
+                        file.write(",")
+                        file.write(str(S_FIRST.index(FIRST)))
+                        file.write(",")
+                        if totaltime > 533:
+                            file.write(str(0))
+                        else:
+                            file.write(str(1))
+                        file.close()
+                        restaurant = Restaurant(3, 3, 10, 3)
+                        waiter = Agent(2,2)
+                        clientTime = 10
+                        ticks = 0
+                        totaltime = 0
+                        IDLE = random.choice(S_IDLE)
+                        FIRST = random.choice(S_FIRST)
     #update waiter
     if project == 0:
         if waiter.idle:
@@ -648,8 +724,24 @@ while True:
             waiter.walk()
             if not waiter.path:
                 waiter.endTask()
+    if project == 1:
+        if waiter.idle:
+            waiter.getTaskTest()
+        else:
+            waiter.walk()
+            if not waiter.path:
+                waiter.endTaskTest()
+        if ticks > 700:
+            restaurant = Restaurant(3, 3, 10, 3)
+            waiter = Agent(2,2)
+            clientTime = 10
+            ticks = 0
+            totaltime = 0
+            IDLE = random.choice(S_IDLE)
+            FIRST = random.choice(S_FIRST)
+
 
     drawScreen()
     pygame.display.update()
-    clock.tick(15)
+    clock.tick(tickTime)
     ticks = ticks + 1
