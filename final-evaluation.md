@@ -33,7 +33,13 @@ Wywołanie podprojektu jest po wciśnięciu '2':
 
     #Execute project
     if event.key == pygame.K_2:
-        print("Passed: %s. Prediction: %s" % (client_ordering(), print_leaf(classify(client_ordering(),tree))))
+        temp_order = client_ordering()
+        print("Passed: %s. Prediction: %s" % (temp_order, print_leaf(classify(temp_order, tree))))
+        
+Wtedy w terminalu jest wypisany wynik działania:
+
+    #Example
+    Passed: ['salad', 'hot', 'Europe', 'baked', 2, 'order']. Prediction: {'Shrimp and Escarole Salad': '100%'}
 
 ##### Serhii Hromov s442778
 
