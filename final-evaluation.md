@@ -29,6 +29,12 @@ Podprojekt polegający na użyciu metody drzew decyzyjnych aby otrzymać optymal
 
 Podprojekt polegający na użyciu metody drzew decyzyjnych aby wybrać danie na podstawie zamówienia przez klienta.
 
+Wywołanie podprojektu jest po wciśnięciu '2':
+
+    #Execute project
+    if event.key == pygame.K_2:
+        print("Passed: %s. Prediction: %s" % (client_ordering(), print_leaf(classify(client_ordering(),tree))))
+
 ##### Serhii Hromov s442778
 
 ### Projekt 4
