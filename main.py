@@ -101,6 +101,7 @@ tableOrder = pygame.image.load('tableOrder.png')
 tableDecide = pygame.image.load('tableDecide.png')
 tableWait = pygame.image.load('tableWait.png')
 tableEat = pygame.image.load('tableEat.png')
+cooker = pygame.image.load('cooker.png')
 wall = pygame.image.load('wall.png')
 # eating time
 EAT_TIME = 15
@@ -499,7 +500,8 @@ def drawScreen():
                         # pygame.draw.rect(display, (64, 64, 64), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                         display.blit(tableEmpty, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 if tile.kitchen:
-                    pygame.draw.rect(display, (255, 0, 255), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                    #pygame.draw.rect(display, (255, 0, 255), (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
+                    display.blit(cooker, (iw * 32 + 1, ih * 32 + 1, 32 - 1, 32 - 1))
                 # if tile.visited:
                 #   pygame.draw.rect(display, (64,0,64), (iw * 32 + 1, ih * 32+1, 14, 14))
             else:
@@ -574,7 +576,8 @@ if help:
     display.blit(tableEat, (WIDTH * 32 + 10, 192, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 192))
     textsurface = font.render("kuchnia", False, (255, 255, 255))
-    pygame.draw.rect(display, (255, 0, 255), (WIDTH * 32 + 10, 224, 32 - 1, 32 - 1))
+    #pygame.draw.rect(display, (255, 0, 255), (WIDTH * 32 + 10, 224, 32 - 1, 32 - 1))
+    display.blit(cooker, (WIDTH * 32 + 10, 224, 32 - 1, 32 - 1))
     display.blit(textsurface, (WIDTH * 32 + 50, 224))
     textsurface = font.render("kaluza", False, (255, 255, 255))
     pygame.draw.circle(display, (128, 128, 255), (WIDTH * 32 + 26, 272), 8)
@@ -594,7 +597,8 @@ while True:
                 project = 1
             #Execute project
             if event.key == pygame.K_2:
-                print("Passed: %s. Prediction: %s" % (client_ordering(), print_leaf(classify(client_ordering(), tree))))
+                temp_order = client_ordering()
+                print("Passed: %s. Prediction: %s" % (temp_order, print_leaf(classify(temp_order, tree))))
             if event.key == pygame.K_F4:
                 pygame.quit()
             if event.key == pygame.K_F5:
