@@ -39,8 +39,8 @@ CATEGORIES = [
 "waffles"
 ]
 
-#food_model = load("models/food_model.joblib")
-#drink_model = load("models/drink_model.joblib")
+food_model = load("models/food_model.joblib")
+drink_model = load("models/drink_model.joblib")
 
 #model = tf.keras.models.load_model('final1')
 
@@ -136,7 +136,7 @@ class Client:
         return (self.gender + "  Age: " + str(self.age) +"  "+ self.outfit+
                 "  $"+ str(self.cash)+ "  Vege: "+ self.vege)
 
-'''
+
 def order_drink(clt):
     frame = []
     if clt.gender == "Man":
@@ -168,8 +168,8 @@ def order_drink(clt):
     drink_index = drink_predict[0]
 
     return  objects[-1][drink_index]
-'''
-'''
+
+
 def order_food(clt):
     frame = []
     if clt.gender == "Man":
@@ -201,7 +201,7 @@ def order_food(clt):
     food_index = food_predict[0]
 
     return objects[-2][food_index]
-'''
+
 
 
 ###
@@ -430,6 +430,9 @@ class Agent:
                 if restaurant.tiles[table[1]][table[0]].clientState == "order":
                     self.astar((table[0], table[1]))
                     self.idle = False
+                    cl = Client()
+                    waiter.order_list.insert(0,order_food(cl))
+                    print('klient zamawia: ' + order_food(cl) +' i '+ order_drink(cl))
                     return True
         #jesli trzyma zamowienie to idzie do kuchni
         if self.orders:
