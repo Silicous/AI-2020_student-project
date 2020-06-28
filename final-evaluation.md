@@ -3,7 +3,8 @@
 
 ## Krótki opis
 
-Agent porusza się po kracie, przyjmuje zamówienia
+Agent porusza się po kracie, przyjmuje zamówienia, zamówienia zanosi do kuchni, czeka na dania, zanosi dania do klientów.
+
 
 ## Technologie:
 - Python3
@@ -24,6 +25,8 @@ Podprojekt polegający na użyciu konwolucyjnej sieci neuronowej do rozpoznania 
 ### Projekt 2
 
 Podprojekt polegający na użyciu metody drzew decyzyjnych aby otrzymać optymalne ustawienia agenta na podstawie danych z losowo generowanych sytuacji.
+
+Po wciśnięciu '1' i 'F5' program generuje losowe sytuacje z których otrzymuje wyniki na których w pliku decisiontree.py jest tworzone drzewo decyzyjne z najbardziej optymalnymi opcjami dla klienta.
 
 ### Projekt 3
 
