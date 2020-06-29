@@ -36,13 +36,30 @@ Wywołanie podprojektu jest po wciśnięciu '2':
 
     #Execute project
     if event.key == pygame.K_2:
-        temp_order = client_ordering()
-        print("Passed: %s. Prediction: %s" % (temp_order, print_leaf(classify(temp_order, tree))))
+                if not actTake:
+                    actTake = True
+                else:
+                    actTake = False
         
-Wtedy w terminalu jest wypisany wynik działania:
+Wtedy kiedy kelner stoi przy stoliku, to przyjmuje zamówienie:
+
+    if actTake:
+        temp_order.append(client_ordering())
+
+Kiedy stoi na kuchnie - decyduje:
+
+    if actTake:
+        if temp_order:
+            for each in temp_order:
+                print("Passed: %s. Prediction: %s" % (each, print_leaf(classify(each, tree))))
+            temp_order.clear()
+
+Przykładowy wynik działania:
 
     #Example
     Passed: ['salad', 'hot', 'Europe', 'baked', 2, 'order']. Prediction: {'Shrimp and Escarole Salad': '100%'}
+
+Wyniki wypisywane są do konsoli.
 
 ##### Serhii Hromov s442778
 
