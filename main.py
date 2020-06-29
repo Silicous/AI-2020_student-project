@@ -13,15 +13,21 @@ from choice_tree import *
 from joblib import load
 from customertree import objects
 
-#import tensorflow as tf
-#from keras import *
+import tensorflow as tf
+from keras import *
+import matplotlib.pyplot as plt
+import cv2
 import h5py
+import time
 
 pygame.init()
 project = 0
+tickTime = 15
+
+
 
 WIN = 0
-LOSSE = 0
+LOSE = 0
 DEFINE = 0
 IMG_SIZE = 64
 COLOR_CHANNELS = 3
@@ -42,12 +48,11 @@ CATEGORIES = [
 food_model = load("models/food_model.joblib")
 drink_model = load("models/drink_model.joblib")
 
-#model = tf.keras.models.load_model('final1')
+model = tf.keras.models.load_model('final1')
 
 with h5py.File('food_10_64x3_test.hdf5', "r") as f:
     a_group_key = list(f.keys())[0]
     data = list(f[a_group_key])
-    # print(len(data))
     data = np.array(data)
     X = np.array(data).reshape(-1, 64, 64, 3)
 with open('food_10_64x3_test.txt', 'r') as f:
@@ -55,28 +60,71 @@ with open('food_10_64x3_test.txt', 'r') as f:
     temp = []
     for item in y:
         temp.append(int(item))
-# print(len(X))
-# print(len(y))
 menu = []
 for i in range(len(X)):
     menu.append([X[i], y[i]])
 random.shuffle(menu)
 
-'''
+
 def image_recognition():
-    LOSSE += 1
-    for _ in range(100):
+    global WIN
+    global LOSE
+    t0= time.clock()
+    for _ in range(1000):
+
         photo = random.choice(menu)
         prediction = model.predict(np.expand_dims(photo[0], axis=0))
         max_value = prediction[0].max()
         idx = np.where(prediction[0]==max_value)
-        if CATEGORIES[idx[0][0]] == waiter.order_list[-1]:
-            WIN += 1
+
+        if CATEGORIES[idx[0][0]] == waiter.order_list[-1][0]:
+            #print(CATEGORIES[idx[0][0]], CATEGORIES[int(photo[1])], waiter.order_list[-1][0])
+            print(f'Oczekiwano: {CATEGORIES[idx[0][0]]}')
+            print(f'Otrzymano: {CATEGORIES[int(photo[1])]}')
+            if CATEGORIES[int(photo[1])] == waiter.order_list[-1][0]:
+                WIN += 1
+            else:
+                LOSE += 1
+            print(WIN, LOSE)
             break
         waiter.order_list.pop()
     #print(WIN, LOSSE - WIN)
-'''
-tickTime = 15
+
+    temp = [waiter.order_list[-1][0], waiter.order_list[-1][1]]
+
+    waiter.order_list.pop()
+    t1 = time.clock() - t0
+    print("Time elapsed: ", t1)
+    if t1 < 10:
+        time.sleep(10-t1)
+
+    return [photo[0], photo[1], temp[0], temp[1]]
+
+def show_food(x,y,img):
+    food_img = img
+    food_img = np.rot90(food_img, k=1, axes=(0, 1))
+    food_img = cv2.cvtColor(food_img, cv2.COLOR_BGR2RGB)
+    food_img = cv2.resize(food_img, (128,128), interpolation = cv2.INTER_AREA)
+    surf = pygame.Surface((food_img.shape[0], food_img.shape[1]))
+    pygame.surfarray.blit_array(surf, food_img)
+    display.blit(surf, (x,y))
+
+def show_order(img):
+    pygame.draw.rect(display,[0,0,0],(WIDTH*32+400-225, 0, (WIDTH * 32 + 325) - (WIDTH*32+400-225), HEIGHT * 32))
+    show_food(WIDTH*32+400-225, HEIGHT*32/2-64, img[0])
+    GGGG = font.render("Klient zamówił:", False, (255,255,255))
+    display.blit(GGGG, (WIDTH*32+400-225, HEIGHT*32/2-81 -54))
+    GGGG = font.render(img[2], False, (255,255,255))
+    display.blit(GGGG, (WIDTH*32+400-225, HEIGHT*32/2-81 -34))
+    GGGG = font.render(img[3], False, (255,255,255))
+    display.blit(GGGG, (WIDTH*32+400-225, HEIGHT*32/2-81 -10))
+
+    GGGG = font.render("Klient otrzymał:", False, (255,255,255))
+    display.blit(GGGG, (WIDTH*32+400-225, HEIGHT*32/2 -54 + 129))
+    GGGG = font.render(CATEGORIES[int(img[1])], False, (255,255,255))
+    display.blit(GGGG, (WIDTH*32+400-225, HEIGHT*32/2 -34 + 129))
+    GGGG = font.render(img[3], False, (255,255,255))
+    display.blit(GGGG, (WIDTH*32+400-225, HEIGHT*32/2 -10 + 129))
 
 # ai settings
 S_IDLE = ("kitchen", "middle", "inplace")
@@ -91,7 +139,7 @@ WIDTH = 10
 KITCHEN = (1, 1)
 MIDDLE = (floor(WIDTH / 2), floor(HEIGHT / 2))
 
-display = pygame.display.set_mode((WIDTH * 32 + 200, HEIGHT * 32))
+display = pygame.display.set_mode((WIDTH * 32 + 325, HEIGHT * 32))
 tileFoil = pygame.image.load('tile.jpg')
 waiterAct1 = pygame.image.load('act1.png')
 waiterAct2 = pygame.image.load('act2.png')
@@ -320,6 +368,7 @@ class Agent:
         self.food = False
         self.goal = (0,0)
         self.order_list = []
+        self.photos = []
         self.order_to_kitchen = []
 
     def walk(self):
@@ -433,7 +482,7 @@ class Agent:
                     self.astar((table[0], table[1]))
                     self.idle = False
                     cl = Client()
-                    waiter.order_list.insert(0,order_food(cl))
+                    waiter.order_list.insert(0,[order_food(cl),order_drink(cl)])
                     print('klient zamawia: ' + order_food(cl) +' i '+ order_drink(cl))
                     return True
         #jesli trzyma zamowienie to idzie do kuchni
@@ -495,6 +544,11 @@ class Agent:
                 if t[2] == 0:
                      restaurant.kitchen.remove(t)
                      waiter.food = True
+<<<<<<< HEAD
+=======
+                     waiter.photos.append(image_recognition())
+        #jesli sie zatrzymal na stoliku z jedzeniem to je daje
+>>>>>>> update
         if restaurant.tiles[waiter.y][waiter.x].clientState == "wait" and waiter.food and not waiter.orders:
             restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
             restaurant.tiles[waiter.y][waiter.x].client = 20
@@ -523,6 +577,7 @@ class Agent:
             restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
             restaurant.tiles[waiter.y][waiter.x].client = 20
             self.food = False
+            show_order(waiter.photos.pop())
         self.idle = True
         if IDLE == "kitchen":
             self.astar(KITCHEN)
@@ -591,7 +646,6 @@ def drawScreen():
     pygame.draw.rect(display, (0, 0, 0), (WIDTH * 32 + 80, 332, HEIGHT * 32, WIDTH * 32))
     textsurface = font.render(str(ticks), False, (255, 255, 255))
     display.blit(textsurface, (WIDTH * 32 + 80, 332))
-
 
 restaurant = Restaurant(0, 0, 0, 0)
 waiter = Agent(1,1)
