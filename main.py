@@ -70,7 +70,7 @@ def image_recognition():
     global WIN
     global LOSE
     t0= time.clock()
-    for _ in range(1000):
+    for _ in range(750):
 
         photo = random.choice(menu)
         prediction = model.predict(np.expand_dims(photo[0], axis=0))
@@ -87,16 +87,13 @@ def image_recognition():
                 LOSE += 1
             print(WIN, LOSE)
             break
-        waiter.order_list.pop()
-    #print(WIN, LOSSE - WIN)
-
     temp = [waiter.order_list[-1][0], waiter.order_list[-1][1]]
 
     waiter.order_list.pop()
     t1 = time.clock() - t0
-    print("Time elapsed: ", t1)
+    print("Time elapsed: ", round(t1, 2))
     if t1 < 10:
-        time.sleep(10-t1)
+        time.sleep(5-t1)
 
     return [photo[0], photo[1], temp[0], temp[1]]
 
@@ -544,14 +541,14 @@ class Agent:
                 if t[2] == 0:
                      restaurant.kitchen.remove(t)
                      waiter.food = True
-<<<<<<< HEAD
-=======
+
                      waiter.photos.append(image_recognition())
         #jesli sie zatrzymal na stoliku z jedzeniem to je daje
->>>>>>> update
+
         if restaurant.tiles[waiter.y][waiter.x].clientState == "wait" and waiter.food and not waiter.orders:
             restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
             restaurant.tiles[waiter.y][waiter.x].client = 20
+            show_order(waiter.photos.pop())
             self.food = False
         self.idle = True
     def endTaskTest(self):
@@ -577,7 +574,7 @@ class Agent:
             restaurant.tiles[waiter.y][waiter.x].clientState = "eat"
             restaurant.tiles[waiter.y][waiter.x].client = 20
             self.food = False
-            show_order(waiter.photos.pop())
+            # show_order(waiter.photos.pop())
         self.idle = True
         if IDLE == "kitchen":
             self.astar(KITCHEN)
