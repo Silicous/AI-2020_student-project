@@ -85,14 +85,14 @@ def image_recognition():
                 WIN += 1
             else:
                 LOSE += 1
-            print(WIN, LOSE)
+            print(f'poprawne zamówienia: {WIN}, błędne: {LOSE}')
             break
     temp = [waiter.order_list[-1][0], waiter.order_list[-1][1]]
 
     waiter.order_list.pop()
     t1 = time.clock() - t0
     print("Time elapsed: ", round(t1, 2))
-    if t1 < 10:
+    if t1 < 5:
         time.sleep(5-t1)
 
     return [photo[0], photo[1], temp[0], temp[1]]
