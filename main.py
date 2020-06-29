@@ -150,6 +150,9 @@ tableWait = pygame.image.load('tableWait.png')
 tableEat = pygame.image.load('tableEat.png')
 cooker = pygame.image.load('cooker.png')
 wall = pygame.image.load('wall.png')
+
+actTake, temp_order = False, []
+
 # eating time
 EAT_TIME = 15
 
@@ -481,6 +484,10 @@ class Agent:
                     cl = Client()
                     waiter.order_list.insert(0,[order_food(cl),order_drink(cl)])
                     print('klient zamawia: ' + order_food(cl) +' i '+ order_drink(cl))
+                    
+                    if actTake:
+                        temp_order.append(client_ordering())
+                    
                     return True
         #jesli trzyma zamowienie to idzie do kuchni
         if self.orders:
@@ -536,6 +543,13 @@ class Agent:
         if waiter.x == 1 and waiter.y == 1 and waiter.orders:
             restaurant.kitchen.append([waiter.orders[0], waiter.orders[1], 50])
             waiter.orders = False
+            
+            if actTake:
+                if temp_order:
+                    for each in temp_order:
+                        print("Passed: %s. Prediction: %s" % (each, print_leaf(classify(each, tree))))
+                    temp_order.clear()
+            
         if waiter.x == 1 and waiter.y == 1 and not waiter.orders:
             for t in restaurant.kitchen:
                 if t[2] == 0:
@@ -707,8 +721,10 @@ while True:
                 project = 1
             #Execute project
             if event.key == pygame.K_2:
-                temp_order = client_ordering()
-                print("Passed: %s. Prediction: %s" % (temp_order, print_leaf(classify(temp_order, tree))))
+                if not actTake:
+                    actTake = True
+                else:
+                    actTake = False
             if event.key == pygame.K_F4:
                 pygame.quit()
             if event.key == pygame.K_F5:
